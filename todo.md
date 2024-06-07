@@ -14,5 +14,6 @@ NTSC: (0.299 * Red + 0.587 * Green + 0.114 * Blue)
 [ ] test the code
 [ ] find bugs
 [ ] automatic image finder
+[ ] tune chunk's black/white ratio
 [ ] add variation to the chunks
 [ ] add random blocks
