@@ -17,4 +17,5 @@ NTSC: (0.299 * Red + 0.587 * Green + 0.114 * Blue)
 [x] tune chunk's black/white ratio
 [x] add variation to the chunks
 [ ] add random blocks
-[ ] custom chunk size
+[x] custom chunk size
+[ ] reads all gradients and asks which one to use

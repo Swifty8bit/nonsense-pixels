@@ -1,6 +1,7 @@
 use image::{io::Reader as ImageReader, DynamicImage, GenericImageView, ImageBuffer};
 
 const PATH: &str = "images/image.png";
+const CHUNK_SIZE: u32 = 16;
 
 fn main() 
 {
@@ -11,8 +12,8 @@ fn main()
     println!("{}", img.height());
     println!("{}", img.width());
 
-    let image_size_x = (img.height() / 16) * 16;
-    let image_size_y = (img.width() / 16) * 16;
+    let image_size_x = (img.height() / CHUNK_SIZE) * CHUNK_SIZE;
+    let image_size_y = (img.width() / CHUNK_SIZE) * CHUNK_SIZE;
 
     let mut imgbuf: ImageBuffer<image::Rgb<u8>, Vec<u8>> = 
         image::ImageBuffer::new(image_size_y, image_size_x);
@@ -24,11 +25,11 @@ fn main()
     let mut image_data: Vec<Vec<ImageData>> = Vec::new();
     // [[ImageData; image_size_y]; image_size_x];
 
-    for n in 0..(image_size_x / 16)
+    for n in 0..(image_size_x / CHUNK_SIZE)
     {
         let mut inner_vec: Vec<ImageData> = Vec::new();
         
-        for m in 0..(image_size_y / 16)
+        for m in 0..(image_size_y / CHUNK_SIZE)
         {
             inner_vec.push(scan_chunk(n as usize, m as usize, &img));
         }
@@ -52,15 +53,15 @@ fn scan_chunk(_x: usize, _y: usize, _img: &DynamicImage) -> ImageData
 {
     let mut all_values: u32 = 0;
 
-    for n in 0..16
+    for n in 0..CHUNK_SIZE
     {
-        for m in 0..16
+        for m in 0..CHUNK_SIZE
         {
-            all_values += _img.get_pixel((_y * 16 + m) as u32, (_x * 16 + n) as u32).0[0] as u32;
+            all_values += _img.get_pixel((_y * CHUNK_SIZE as usize + m as usize) as u32, (_x * CHUNK_SIZE as usize + n as usize) as u32).0[0] as u32;
         }
     }
 
-    all_values = all_values / 256;
+    all_values = all_values / (CHUNK_SIZE * 16);
     let brightness_calculated = all_values as u8;
 
     let imgdt = ImageData
@@ -78,13 +79,13 @@ fn draw_square(_imgdt: &ImageData, _imgbuf:
     _gradient: &DynamicImage)
 {
 
-    for n in 0..16
+    for n in 0..CHUNK_SIZE
     {
-        for m in 0..16
+        for m in 0..CHUNK_SIZE
         {
             let pixel = _imgbuf.get_pixel_mut(
-                (_imgdt.y * 16 + m) as u32, 
-                (_imgdt.x * 16 + n) as u32);
+                (_imgdt.y * CHUNK_SIZE as usize + m as usize) as u32, 
+                (_imgdt.x * CHUNK_SIZE as usize + n as usize) as u32);
             
             let color = _gradient.get_pixel(
                 index_from_brightness(_imgdt.brightness) + n as u32, 
